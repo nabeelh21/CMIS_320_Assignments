@@ -1,0 +1,180 @@
+SQL> SET ECHO ON
+SQL> DROP TABLE Customer CASCADE CONSTRAINTS;
+
+Table CUSTOMER dropped.
+
+SQL> CREATE TABLE Customer (
+                        Customer_ID    NUMBER(10) PRIMARY KEY,
+                        Last_Name      VARCHAR2(30) NOT NULL,
+                        First_Name     VARCHAR2(20) NOT NULL,
+                        Street        VARCHAR2(30) NOT NULL,
+                        City          VARCHAR2(30) NOT NULL,
+                        State         CHAR(2) NOT NULL,
+                        Zip_Code       CHAR(5) NOT NULL,
+                        Phone_Number            VARCHAR2(12) NOT NULL UNIQUE,
+                        Videos_Rented_Last_Month  NUMBER(5) NOT NULL,
+                        Videos_Rented_This_Year   NUMBER(5) NOT NULL,
+                        Total_Videos_Rented      NUMBER(5) NOT NULL
+                      );
+
+Table CUSTOMER created.
+
+SQL> DROP TABLE Video CASCADE CONSTRAINTS;
+
+Table VIDEO dropped.
+
+SQL> CREATE TABLE Video (
+                        Video_ID       NUMBER(10) PRIMARY KEY,
+                        Movie_ID       NUMBER(10) NOT NULL,
+                        Distributor_ID NUMBER(10) NOT NULL,
+                        Distributor_Serial_Number NUMBER(10) NOT NULL,
+                        Video_Format   VARCHAR2(3) NOT NULL,
+                        Price         NUMBER(5,2) NOT NULL,
+                        Discount_Price NUMBER(5,2), 
+                        Quantity      NUMBER(5) NOT NULL,                 
+                        CONSTRAINT FK_MovieID_Video FOREIGN KEY (Movie_ID) REFERENCES Movie(Movie_ID) ON DELETE CASCADE,
+                        CONSTRAINT FK_DistributorID_Video FOREIGN KEY (Distributor_ID) REFERENCES Distributor(Distributor_ID) ON DELETE CASCADE
+                      );
+
+Table VIDEO created.
+
+SQL> DROP TABLE Movie CASCADE CONSTRAINTS;
+
+Table MOVIE dropped.
+
+SQL> CREATE TABLE Movie (
+                        Movie_ID         NUMBER(10) PRIMARY KEY,
+                        Distributor_Movie_ID NUMBER(10)NOT NULL UNIQUE,
+                        Title           VARCHAR2(30) NOT NULL,
+                        Genre           VARCHAR2(30) NOT NULL,
+                        Running_Length   VARCHAR2(30) NOT NULL,
+                        Rating          VARCHAR2(5) NOT NULL,
+                        Year_Released    NUMBER(4) NOT NULL                      
+                      );
+
+Table MOVIE created.
+
+SQL> DROP TABLE Actor CASCADE CONSTRAINTS;
+
+Table ACTOR dropped.
+
+SQL> CREATE TABLE Actor (
+                        Actor_ID         NUMBER(10) PRIMARY KEY,
+                        Last_Name        VARCHAR2(30) NOT NULL,
+                        First_Name       VARCHAR2(20) NOT NULL,
+                        Gender           VARCHAR2(20) NOT NULL
+                      );
+
+Table ACTOR created.
+
+SQL> DROP TABLE ActorsInMovies CASCADE CONSTRAINTS;
+
+Table ACTORSINMOVIES dropped.
+
+SQL> CREATE TABLE ActorsInMovies (
+                        Actors_In_Movies_ID   NUMBER(10) PRIMARY KEY,
+                        Actor_ID         NUMBER(10) NOT NULL,
+                        Movie_ID         NUMBER(10) NOT NULL,
+                        CONSTRAINT FK_Actor_ID_Actor FOREIGN KEY (Actor_ID) REFERENCES Actor(Actor_ID) ON DELETE CASCADE,
+                        CONSTRAINT FK_MovieID_Actor FOREIGN KEY (Movie_ID) REFERENCES Movie(Movie_ID) ON DELETE CASCADE
+                      );
+
+Table ACTORSINMOVIES created.
+
+SQL> DROP TABLE Director CASCADE CONSTRAINTS;
+
+Table DIRECTOR dropped.
+
+SQL> CREATE TABLE Director (
+                        Director_ID      NUMBER(10) PRIMARY KEY,
+                        Last_Name        VARCHAR2(30) NOT NULL,
+                        First_Name       VARCHAR2(20) NOT NULL,
+                        Gender           VARCHAR2(30) NOT NULL
+                      );
+
+Table DIRECTOR created.
+
+SQL> DROP TABLE DirectorsInMovies CASCADE CONSTRAINTS;
+
+Table DIRECTORSINMOVIES dropped.
+
+SQL> CREATE TABLE DirectorsInMovies (
+                        Directors_In_Movies_ID      NUMBER(10) PRIMARY KEY,
+                        Director_ID      NUMBER(10) NOT NULL,
+                        Movie_ID         NUMBER(10) NOT NULL,
+                        CONSTRAINT FK_Director_ID_Directors FOREIGN KEY (Director_ID) REFERENCES Director(Director_ID) ON DELETE CASCADE,
+                        CONSTRAINT FK_MovieID_Directors FOREIGN KEY (Movie_ID) REFERENCES Movie(Movie_ID) ON DELETE CASCADE
+                      );
+
+Table DIRECTORSINMOVIES created.
+
+SQL> DROP TABLE Awards CASCADE CONSTRAINTS;
+
+Table AWARDS dropped.
+
+SQL> CREATE TABLE Awards (
+                        Award_ID      NUMBER(10) PRIMARY KEY,
+                        Actor_ID      NUMBER(10) NOT NULL,
+                        Director_ID   NUMBER(10) NOT NULL,
+                        Movie_ID      NUMBER(10) NOT NULL,
+                        Category      VARCHAR2(30) NOT NULL,
+                        Year_Won      NUMBER(4) NOT NULL,
+                        CONSTRAINT FK_Actor_ID_Awards FOREIGN KEY (Actor_ID) REFERENCES Actor(Actor_ID) ON DELETE CASCADE,
+                        CONSTRAINT FK_Director_ID_Awards FOREIGN KEY (Director_ID) REFERENCES Director(Director_ID) ON DELETE CASCADE,
+                        CONSTRAINT FK_MovieID_Awards FOREIGN KEY (Movie_ID) REFERENCES Movie(Movie_ID) ON DELETE CASCADE
+                      );
+
+Table AWARDS created.
+
+SQL> DROP TABLE CustomerRental CASCADE CONSTRAINTS;
+
+Table CUSTOMERRENTAL dropped.
+
+SQL> CREATE TABLE CustomerRental (
+                        Rental_ID       NUMBER(10) PRIMARY KEY,
+                        Customer_ID    NUMBER(10) NOT NULL,
+                        Video_ID       NUMBER(10) NOT NULL,
+                        Rental_Date     DATE NOT NULL,
+                        Return_Date    DATE NOT NULL,
+                        Payment_Type   VARCHAR2(20) NOT NULL,
+                        Tax           NUMBER(10,2) NOT NULL,
+                        Total_Payment  NUMBER(10, 2) NOT NULL,
+                        CONSTRAINT FK_CustomerID_CustomerRental FOREIGN KEY (Customer_ID) REFERENCES Customer(Customer_ID) ON DELETE CASCADE,
+                        CONSTRAINT FK_VideoID_CustomerRental FOREIGN KEY (Video_ID) REFERENCES Video(Video_ID) ON DELETE CASCADE
+                      );
+
+Table CUSTOMERRENTAL created.
+
+SQL> DROP TABLE CustomerCharge CASCADE CONSTRAINTS;
+
+Table CUSTOMERCHARGE dropped.
+
+SQL> CREATE TABLE CustomerCharge (
+                        Charge_ID      NUMBER(10) PRIMARY KEY,
+                        Customer_ID    NUMBER(10) NOT NULL,
+                        Late_Fee       NUMBER(10,2) NOT NULL,
+                        Damage_Fee     NUMBER(10,2) NOT NULL,
+                        Rewind_Fee     NUMBER(10,2) NOT NULL,
+                        CONSTRAINT FK_CustomerID_CustomerCharge FOREIGN KEY (Customer_ID) REFERENCES Customer(Customer_ID) ON DELETE CASCADE
+                      );
+
+Table CUSTOMERCHARGE created.
+
+SQL> DROP TABLE Distributor CASCADE CONSTRAINTS;
+
+Table DISTRIBUTOR dropped.
+
+SQL> CREATE TABLE Distributor (
+                        Distributor_ID    NUMBER(10) PRIMARY KEY,
+                        Company_Name      VARCHAR2(30) NOT NULL,
+                        Street           VARCHAR2(30) NOT NULL,
+                        City             VARCHAR2(30) NOT NULL,
+                        State            CHAR(2) NOT NULL,
+                        Zip_Code          CHAR(5) NOT NULL,
+                        Phone_Number      VARCHAR2(12) NOT NULL UNIQUE
+                      );
+
+Table DISTRIBUTOR created.
+
+SQL> SET ECHO OFF
+SQL> SPOOL OFF

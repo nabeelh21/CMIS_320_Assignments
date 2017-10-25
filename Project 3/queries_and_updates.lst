@@ -1,0 +1,114 @@
+SQL> SET ECHO ON
+SQL> --  Retrieve all of your customers' names, account numbers, and addresses (street and zip code only), sorted by account number(CustomerID).
+SQL> SELECT Customer_ID, Last_Name, First_Name, Street, Zip_Code FROM Customer ORDER BY Customer_ID;
+
+CUSTOMER_ID LAST_NAME                      FIRST_NAME           STREET                         ZIP_C
+----------- ------------------------------ -------------------- ------------------------------ -----
+          1 Hussain                        Nabeel               20305 Greenriver Terrace       20876
+          2 Smith                          John                 56943 South Avenue             20877
+          3 Stein                          Marc                 58476 Lakeview Circle          20878
+          4 Wall                           John                 92684 Bronco Street            20847
+          5 Kim                            Lucy                 28947 Willow Circle            20885
+
+SQL> -- Retrieve all of the videos rented in the last 30 days and sort in chronological rental date order.
+SQL> SELECT * from CustomerRental WHERE Rental_Date >= (sysdate-30) ORDER BY Rental_Date;
+
+ RENTAL_ID CUSTOMER_ID   VIDEO_ID RENTAL_DATE RETURN_DATE PAYMENT_TYPE                TAX TOTAL_PAYMEN
+---------- ----------- ---------- ----------- ----------- -------------------- ---------- ------------
+         3           2          1 16-JUN-17   19-JUN-17   MasterCard                  .06         7.95
+         4           3          4 25-JUN-17   28-JUN-17   Discover                    .06         7.95
+         5           5          2 30-JUN-17   03-JUL-17   Visa                        .06         7.95
+
+SQL> -- Produce a list of your distributors and all their information sorted in order by company name.
+SQL> SELECT * from Distributor ORDER BY Company_Name;
+
+DISTRIBUTOR COMPANY_NAME                   STREET                         CITY                           ST ZIP_C PHONE_NUMBER
+----------- ------------------------------ ------------------------------ ------------------------------ -- ----- ------------
+          5 Applegate Media                34678 Autum Lane               Arlington                      VA 22202 757-586-9437
+          2 Entertainment 123              89635 Dole Street              Los Angeles                    CA 90024 661-896-7635
+          3 Horizon Films                  58973 Blue Court               Los Angeles                    CA 90001 661-369-8194
+          1 Movies and More Inc.           34678 Autum Lane               San Francisco                  CA 94016 415-569-8659
+          4 Star Productions               34678 Bellview Drive           Atlanta                        GA 30301 678-103-7893
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> -- Will show the current Customer table before we update a customers name.
+SQL> SELECT * from Customer;
+
+CUSTOMER_ID LAST_NAME                      FIRST_NAME           STREET                         CITY                           ST ZIP_C PHONE_NUMBER VIDEOS_RENTED_LAST_MONTH VIDEOS_RENTED_THIS_YEAR TOTAL_VIDEOS_RENTED
+----------- ------------------------------ -------------------- ------------------------------ ------------------------------ -- ----- ------------ ------------------------ ----------------------- -------------------
+          1 Hussain                        Nabeel               20305 Greenriver Terrace       Germantown                     MD 20876 240-498-4458                        5                      30                 160
+          2 Smith                          John                 56943 South Avenue             Germantown                     MD 20877 240-863-8653                        2                      25                  85
+          3 Stein                          Marc                 58476 Lakeview Circle          Gaithersburg                   MD 20878 301-896-7536                        0                      15                 110
+          4 Wall                           John                 92684 Bronco Street            Rockville                      MD 20847 240-856-7896                        3                      12                  90
+          5 Kim                            Lucy                 28947 Willow Circle            Gaithersburg                   MD 20885 301-635-7965                        8                      45                 180
+
+SQL> -- Update a customer name to change their maiden name to a married name. You can choose which row to update. Make sure that you use the primary key column in your WHERE clause to affect only a specific row.
+SQL> UPDATE Customer SET Last_Name = 'Wang' WHERE Customer_ID = 5;
+
+1 row updated.
+
+SQL> -- Will show the updated Customer table after the customers maiden name has been changed.
+SQL> SELECT * from Customer;
+
+CUSTOMER_ID LAST_NAME                      FIRST_NAME           STREET                         CITY                           ST ZIP_C PHONE_NUMBER VIDEOS_RENTED_LAST_MONTH VIDEOS_RENTED_THIS_YEAR TOTAL_VIDEOS_RENTED
+----------- ------------------------------ -------------------- ------------------------------ ------------------------------ -- ----- ------------ ------------------------ ----------------------- -------------------
+          1 Hussain                        Nabeel               20305 Greenriver Terrace       Germantown                     MD 20876 240-498-4458                        5                      30                 160
+          2 Smith                          John                 56943 South Avenue             Germantown                     MD 20877 240-863-8653                        2                      25                  85
+          3 Stein                          Marc                 58476 Lakeview Circle          Gaithersburg                   MD 20878 301-896-7536                        0                      15                 110
+          4 Wall                           John                 92684 Bronco Street            Rockville                      MD 20847 240-856-7896                        3                      12                  90
+          5 Wang                           Lucy                 28947 Willow Circle            Gaithersburg                   MD 20885 301-635-7965                        8                      45                 180
+
+SQL> -- Will Rollback the update, for repeat testing purposes.
+SQL> ROLLBACK;
+
+Rollback complete.
+
+SQL> -- Will show the current Customer table after the rollback has taken effect to confirm that the update was reversed.
+SQL> SELECT * from Customer;
+
+CUSTOMER_ID LAST_NAME                      FIRST_NAME           STREET                         CITY                           ST ZIP_C PHONE_NUMBER VIDEOS_RENTED_LAST_MONTH VIDEOS_RENTED_THIS_YEAR TOTAL_VIDEOS_RENTED
+----------- ------------------------------ -------------------- ------------------------------ ------------------------------ -- ----- ------------ ------------------------ ----------------------- -------------------
+          1 Hussain                        Nabeel               20305 Greenriver Terrace       Germantown                     MD 20876 240-498-4458                        5                      30                 160
+          2 Smith                          John                 56943 South Avenue             Germantown                     MD 20877 240-863-8653                        2                      25                  85
+          3 Stein                          Marc                 58476 Lakeview Circle          Gaithersburg                   MD 20878 301-896-7536                        0                      15                 110
+          4 Wall                           John                 92684 Bronco Street            Rockville                      MD 20847 240-856-7896                        3                      12                  90
+          5 Kim                            Lucy                 28947 Willow Circle            Gaithersburg                   MD 20885 301-635-7965                        8                      45                 180
+
+SQL> -- Delete a customer from the database. You can choose which row to delete. Make sure that you use the primary key column in your WHERE clause to affect only a specific row.
+SQL> -- Technicially you will get an error since this attribute is also referenced in another table as a FK. As a result when creating the tables I included the ON DELETE CASCADE
+SQL> -- statement, so that if a record in the parent table is deleted, then the corresponding records in the child table will automatically be deleted. This is called a cascade delete in Oracle.
+SQL> DELETE FROM Customer WHERE Customer_ID = 2;
+
+1 row deleted.
+
+SQL> -- Will show the new Customer table after deletion of a customer.
+SQL> SELECT * FROM Customer;
+
+CUSTOMER_ID LAST_NAME                      FIRST_NAME           STREET                         CITY                           ST ZIP_C PHONE_NUMBER VIDEOS_RENTED_LAST_MONTH VIDEOS_RENTED_THIS_YEAR TOTAL_VIDEOS_RENTED
+----------- ------------------------------ -------------------- ------------------------------ ------------------------------ -- ----- ------------ ------------------------ ----------------------- -------------------
+          1 Hussain                        Nabeel               20305 Greenriver Terrace       Germantown                     MD 20876 240-498-4458                        5                      30                 160
+          3 Stein                          Marc                 58476 Lakeview Circle          Gaithersburg                   MD 20878 301-896-7536                        0                      15                 110
+          4 Wall                           John                 92684 Bronco Street            Rockville                      MD 20847 240-856-7896                        3                      12                  90
+          5 Kim                            Lucy                 28947 Willow Circle            Gaithersburg                   MD 20885 301-635-7965                        8                      45                 180
+
+SQL> -- Will Rollback the deletion, for repeat testing purposes.
+SQL> ROLLBACK;
+
+Rollback complete.
+
+SQL> -- Will show the current Customer table after the rollback has taken effect to confirm that the deletion of the customer was reversed.
+SQL> SELECT * FROM Customer;
+
+CUSTOMER_ID LAST_NAME                      FIRST_NAME           STREET                         CITY                           ST ZIP_C PHONE_NUMBER VIDEOS_RENTED_LAST_MONTH VIDEOS_RENTED_THIS_YEAR TOTAL_VIDEOS_RENTED
+----------- ------------------------------ -------------------- ------------------------------ ------------------------------ -- ----- ------------ ------------------------ ----------------------- -------------------
+          1 Hussain                        Nabeel               20305 Greenriver Terrace       Germantown                     MD 20876 240-498-4458                        5                      30                 160
+          2 Smith                          John                 56943 South Avenue             Germantown                     MD 20877 240-863-8653                        2                      25                  85
+          3 Stein                          Marc                 58476 Lakeview Circle          Gaithersburg                   MD 20878 301-896-7536                        0                      15                 110
+          4 Wall                           John                 92684 Bronco Street            Rockville                      MD 20847 240-856-7896                        3                      12                  90
+          5 Kim                            Lucy                 28947 Willow Circle            Gaithersburg                   MD 20885 301-635-7965                        8                      45                 180
+
+SQL> SET ECHO OFF
+SQL> SPOOL OFF
